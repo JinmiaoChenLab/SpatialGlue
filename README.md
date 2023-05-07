@@ -24,7 +24,8 @@ You'll need to install the following packages in order to run the codes.
 * R==4.0.3
 
 ## Tutorial
-For the step-by-step tutorial, we would release it soon.
+For the step-by-step tutorial, please refer to:
+[https://spatialglue-tutorials.readthedocs.io/en/latest/](https://spatialglue-tutorials.readthedocs.io/en/latest/)
 
 ## Citation
 Yahui Long, Kok Siong Ang, Sha Liao, Raman Sethi, Yang Heng, Chengwei Zhong, Hang Xu, Nazihah Husna, Min Jian, Lai Guan Ng, Ao Chen, Nicholas RJ Gascoigne, Xun Xu, Jinmiao Chen. Integrated analysis of spatial multi-omics with SpatialGlue. bioRxiv. 2023.
