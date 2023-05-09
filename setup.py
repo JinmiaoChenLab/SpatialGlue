@@ -1,7 +1,7 @@
 from setuptools import Command, find_packages, setup
 
 __lib_name__ = "SpatialGlue"
-__lib_version__ = "1.0.0"
+__lib_version__ = "1.0.1"
 __description__ = "Integrated analysis of spatial multi-omics with SpatialGlue"
 __url__ = "https://github.com/JinmiaoChenLab/SpatialGlue"
 __author__ = "Yahui Long"
