@@ -1,4 +1,4 @@
-# Integrated analysis of spatial multi-omics with SpatialGlue
+# Deciphering spatial domains from spatial multi-omics with SpatialGlue 
 
 [![DOI](https://zenodo.org/badge/631763850.svg)](https://zenodo.org/badge/latestdoi/631763850)
 
