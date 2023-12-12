@@ -28,4 +28,4 @@ For the step-by-step tutorial, please refer to:
 [https://spatialglue-tutorials.readthedocs.io/en/latest/](https://spatialglue-tutorials.readthedocs.io/en/latest/)
 
 ## Citation
-Yahui Long, Kok Siong Ang, Sha Liao, Raman Sethi, Yang Heng, Chengwei Zhong, Hang Xu, Nazihah Husna, Min Jian, Lai Guan Ng, Ao Chen, Nicholas RJ Gascoigne, Xun Xu, Jinmiao Chen. Integrated analysis of spatial multi-omics with SpatialGlue. bioRxiv. 2023.
+Yahui Long, Kok Siong Ang, Sha Liao, Raman Sethi, Yang Heng, Chengwei Zhong, Hang Xu, Nazihah Husna, Min Jian, Lai Guan Ng, Ao Chen, Nicholas RJ Gascoigne, Xun Xu, Jinmiao Chen. Deciphering spatial domains from spatial multi-omics with SpatialGlue. bioRxiv. 2023.
