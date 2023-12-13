@@ -5,7 +5,11 @@ from torch.nn.parameter import Parameter
 from torch.nn.modules.module import Module
     
 class Encoder_overall(Module):
-    """Overall encoder"""
+    
+    """
+    Overall encoder
+    """
+    
     def __init__(self, dim_in_feat_omics1, dim_out_feat_omics1, dim_in_feat_omics2, dim_out_feat_omics2, dropout=0.0, act=F.relu):
         super(Encoder_overall, self).__init__()
         self.dim_in_feat_omics1 = dim_in_feat_omics1
@@ -24,10 +28,8 @@ class Encoder_overall(Module):
         self.atten_omics2 = AttentionLayer(self.dim_out_feat_omics2, self.dim_out_feat_omics2)
         self.atten_cross = AttentionLayer(self.dim_out_feat_omics1, self.dim_out_feat_omics2)
         
-        self.discriminator = Discriminator(self.dim_out_feat_omics1)
-        
-    #def forward(self, feat1, feat2, adj1_1, adj1_2, adj2_1, adj2_2):
     def forward(self, features_omics1, features_omics2, adj_spatial_omics1, adj_feature_omics1, adj_spatial_omics2, adj_feature_omics2): 
+        
         # graph1
         emb_latent_spatial_omics1 = self.encoder_omics1(features_omics1, adj_spatial_omics1)  
         emb_latent_spatial_omics2 = self.encoder_omics2(features_omics2, adj_spatial_omics2)
@@ -36,24 +38,20 @@ class Encoder_overall(Module):
         emb_latent_feature_omics1 = self.encoder_omics1(features_omics1, adj_feature_omics1)
         emb_latent_feature_omics2 = self.encoder_omics2(features_omics2, adj_feature_omics2)
         
-        # within-modality attention aggregation
+        # within-modality attention aggregation layer
         emb_latent_omics1, alpha_omics1 = self.atten_omics1(emb_latent_spatial_omics1, emb_latent_feature_omics1)
         emb_latent_omics2, alpha_omics2 = self.atten_omics2(emb_latent_spatial_omics2, emb_latent_feature_omics2)
         
-        # between-modality attention aggregation
+        # between-modality attention aggregation layer
         emb_latent_combined, alpha_omics_1_2 = self.atten_cross(emb_latent_omics1, emb_latent_omics2)
         
-        # reconstruct expression matrix using two modality-specific decoders, respectively
+        # reverse the integrated representation back into the original expression space with modality-specific decoder
         emb_recon_omics1 = self.decoder_omics1(emb_latent_combined, adj_spatial_omics1)
         emb_recon_omics2 = self.decoder_omics2(emb_latent_combined, adj_spatial_omics2)
         
-        emb_latent_omics1_across_recon = self.encoder_omics2(self.decoder_omics2(emb_latent_omics1, adj_spatial_omics2), adj_spatial_omics2) # consistent encoding  # dim=64
+        # consistency encoding
+        emb_latent_omics1_across_recon = self.encoder_omics2(self.decoder_omics2(emb_latent_omics1, adj_spatial_omics2), adj_spatial_omics2) 
         emb_latent_omics2_across_recon = self.encoder_omics1(self.decoder_omics1(emb_latent_omics2, adj_spatial_omics1), adj_spatial_omics1)
-        
-        score_omics1 = self.discriminator(emb_latent_omics1)
-        score_omics2 = self.discriminator(emb_latent_omics2)
-        score_omics1=torch.squeeze(score_omics1, dim=1)
-        score_omics2=torch.squeeze(score_omics2, dim=1)
         
         results = {'emb_latent_omics1':emb_latent_omics1,
                    'emb_latent_omics2':emb_latent_omics2,
@@ -64,14 +62,17 @@ class Encoder_overall(Module):
                    'emb_latent_omics2_across_recon':emb_latent_omics2_across_recon,
                    'alpha_omics1':alpha_omics1,
                    'alpha_omics2':alpha_omics2,
-                   'alpha':alpha_omics_1_2,
-                   'score_omics1':score_omics1,
-                   'score_omics2':score_omics2}
+                   'alpha':alpha_omics_1_2
+                   }
         
         return results     
 
 class Encoder(Module): 
-    """Modality-specific GNN encoder """
+    
+    """
+    Modality-specific GNN encoder 
+    """
+    
     def __init__(self, in_feat, out_feat, dropout=0.0, act=F.relu):
         super(Encoder, self).__init__()
         self.in_feat = in_feat
@@ -93,7 +94,11 @@ class Encoder(Module):
         return x
     
 class Decoder(Module):
-    """Modality-specific GNN decoder """
+    
+    """
+    Modality-specific GNN decoder 
+    """
+    
     def __init__(self, in_feat, out_feat, dropout=0.0, act=F.relu):
         super(Decoder, self).__init__()
         self.in_feat = in_feat
@@ -112,36 +117,14 @@ class Decoder(Module):
         x = torch.mm(feat, self.weight)
         x = torch.spmm(adj, x)
         
-        return x      
-    
-class Discriminator(nn.Module):
-    """Latent space discriminator"""
-    def __init__(self, dim_input, n_hidden=50, n_out=1):
-        super(Discriminator, self).__init__()
-        self.dim_input = dim_input
-        self.n_hidden = n_hidden
-        self.n_out = n_out
-
-        self.net = nn.Sequential(
-            nn.Linear(dim_input, n_hidden),
-            nn.LeakyReLU(inplace=True),
-            nn.Linear(n_hidden, 2*n_hidden),
-            nn.LeakyReLU(inplace=True),
-            #nn.Linear(n_hidden, n_hidden),
-            #nn.ReLU(inplace=True),
-            #nn.Linear(n_hidden, n_hidden),
-            #nn.ReLU(inplace=True),
-            #nn.Linear(n_hidden, n_hidden),
-            #nn.ReLU(inplace=True),
-            nn.Linear(2*n_hidden,n_out),
-            nn.Sigmoid(),
-        )
-
-    def forward(self, x):
-        return self.net(x)             
+        return x                  
 
 class AttentionLayer(Module):
-    """Attention layer"""
+    
+    """
+    Attention layer
+    """
+    
     def __init__(self, in_feat, out_feat, dropout=0.0, act=F.relu):
         super(AttentionLayer, self).__init__()
         self.in_feat = in_feat
