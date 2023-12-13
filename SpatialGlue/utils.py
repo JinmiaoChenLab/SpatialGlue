@@ -1,10 +1,10 @@
 import os
 import pickle
 import numpy as np
-import pandas as pd
 import scanpy as sc
+import pandas as pd
 import seaborn as sns
-from sklearn.decomposition import PCA
+from .utils import pca
 import matplotlib.pyplot as plt
 
 #os.environ['R_HOME'] = '/scbio4/tools/R/R-4.0.3_openblas/R-4.0.3'    
@@ -33,7 +33,7 @@ def mclust_R(adata, num_cluster, modelNames='EEE', used_obsm='emb_pca', random_s
     adata.obs['mclust'] = adata.obs['mclust'].astype('category')
     return adata
 
-def clustering(adata, n_clusters=7, key='emb', add_key='SpatialGlue', method='mclust', start=0.1, end=3.0, increment=0.01, use_pca=False):
+def clustering(adata, n_clusters=7, key='emb', add_key='SpatialGlue', method='mclust', start=0.1, end=3.0, increment=0.01, use_pca=False, n_comps=20):
     """\
     Spatial clustering based the latent representation.
 
@@ -63,8 +63,8 @@ def clustering(adata, n_clusters=7, key='emb', add_key='SpatialGlue', method='mc
     """
     
     if use_pca:
-       pca = PCA(n_components=20, random_state=42) 
-       adata.obsm[key + '_pca'] = pca.fit_transform(adata.obsm[key].copy())
+       pca_ = pca(n_components=n_comps, random_state=42) 
+       adata.obsm[key + '_pca'] = pca_.fit_transform(adata.obsm[key].copy())
     
     if method == 'mclust':
        if use_pca: 
