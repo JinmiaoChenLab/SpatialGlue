@@ -15,6 +15,7 @@ class SpatialGlue:
         epochs=1500, 
         dim_input=3000,
         dim_output=64,
+        weight_factors = [1, 5, 1, 1]
         ):
         '''\
 
@@ -32,13 +33,15 @@ class SpatialGlue:
         learning_rate : float, optional
             Learning rate for ST representation learning. The default is 0.001.
         weight_decay : float, optional
-            Weight factor to control the influence of weight parameters. The default is 0.00.
+            Weight decay to control the influence of weight parameters. The default is 0.00.
         epochs : int, optional
             Epoch for model training. The default is 1500.
         dim_input : int, optional
             Dimension of input feature. The default is 3000.
         dim_output : int, optional
             Dimension of output representation. The default is 64.
+        weight_factors : list, optional
+            Weight factors to balance the influcences of different omics data on model training.
     
         Returns
         -------
@@ -54,8 +57,7 @@ class SpatialGlue:
         self.epochs=epochs
         self.dim_input = dim_input
         self.dim_output = dim_output
-        
-        #fix_seed(self.random_seed)
+        self.weight_factors = weight_factors
         
         # adj
         self.adata_omics1 = self.data['adata_omics1']
@@ -83,7 +85,7 @@ class SpatialGlue:
         self.model = Encoder_overall(self.dim_input1, self.dim_output1, self.dim_input2, self.dim_output2).to(self.device)
         self.optimizer = torch.optim.Adam(self.model.parameters(), self.learning_rate, 
                                           weight_decay=self.weight_decay)
-        #self.model.train()
+        self.model.train()
         for epoch in tqdm(range(self.epochs)):
             self.model.train()
             results = self.model(self.features_omics1, self.features_omics2, self.adj_spatial_omics1, self.adj_feature_omics1, self.adj_spatial_omics2, self.adj_feature_omics2)
@@ -93,26 +95,23 @@ class SpatialGlue:
             self.loss_recon_omics2 = F.mse_loss(self.features_omics2, results['emb_recon_omics2'])
             
             # correspondence loss
-            self.loss_corre_omics1 = F.mse_loss(results['emb_latent_omics1'], results['emb_latent_omics1_across_recon'])
-            self.loss_corre_omics2 = F.mse_loss(results['emb_latent_omics2'], results['emb_latent_omics2_across_recon'])
+            self.loss_corr_omics1 = F.mse_loss(results['emb_latent_omics1'], results['emb_latent_omics1_across_recon'])
+            self.loss_corr_omics2 = F.mse_loss(results['emb_latent_omics2'], results['emb_latent_omics2_across_recon'])
             
-            # adversial loss
-            self.label1 = torch.zeros(results['score_omics1'].size(0),).float().to(self.device)
-            self.label2 = torch.ones(results['score_omics2'].size(0),).float().to(self.device)
-            self.adversial_loss1 = F.mse_loss(results['score_omics1'], self.label1)
-            self.adversial_loss2 = F.mse_loss(results['score_omics2'], self.label2)
-            #self.loss_ad = 0.5*self.adversial_loss1 + 0.5*self.adversial_loss2
-            self.loss_ad = self.adversial_loss1 + self.adversial_loss2
-            
-            if self.datatype == 'Spatial-ATAC-RNA-seq':
-               loss = self.loss_recon_omics1 + 2.5*self.loss_recon_omics2 + self.loss_corre_omics1 + self.loss_corre_omics2 #+ self.loss_ad 
+            if self.datatype == 'SPOTS':
+               self.weight_factors = [1,5,1,1]
                
-            elif self.datatype == 'SPOTS':  
-               loss = self.loss_recon_omics1 + 50*self.loss_recon_omics2 + self.loss_corre_omics1 + 5*self.loss_corre_omics2 #+ self.loss_ad
-              
             elif self.datatype == 'Stereo-CITE-seq':
-               loss = self.loss_recon_omics1 + 10*self.loss_recon_omics2 + self.loss_corre_omics1 + 10*self.loss_corre_omics2 #+ 10*self.loss_ad   
-              
+               self.weight_factors = [1,10,1,10]
+               
+            elif self.datatype == '10x':
+                self.weight_factors = [1,5,1,10]
+                
+            elif self.datatype == 'Spatial-epigenome-transcripome':    
+                self.weight_factors = [1,5,1,1]
+                
+            loss = self.weight_factors[0]*self.loss_recon_omics1 + self.weight_factors[1]*self.loss_recon_omics2 + self.weight_factors[2]*self.loss_corr_omics1 + self.weight_factors[3]*self.loss_corr_omics2
+            
             self.optimizer.zero_grad()
             loss.backward() 
             self.optimizer.step()
@@ -129,7 +128,7 @@ class SpatialGlue:
         
         output = {'emb_latent_omics1': emb_omics1.detach().cpu().numpy(),
                   'emb_latent_omics2': emb_omics2.detach().cpu().numpy(),
-                  'emb_latent_combined': emb_combined.detach().cpu().numpy(),
+                  'SpatialGlue': emb_combined.detach().cpu().numpy(),
                   'alpha_omics1': results['alpha'].detach().cpu().numpy(),
                   'alpha_omics2': results['alpha'].detach().cpu().numpy(),
                   'alpha': results['alpha'].detach().cpu().numpy()}
