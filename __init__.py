@@ -10,5 +10,6 @@ __email__ = "long_yahui@immunol.a-star.edu.sg"
 
 from .model import Encoder_overall
 from .preprocess import adjacent_matrix_preprocessing, preprocessing, fix_seed
-from .utils import clustering, plot_weight_value, pca
+from .utils import clustering, plot_weight_value
+from .preprocess import pca
 
