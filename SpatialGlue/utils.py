@@ -4,7 +4,7 @@ import numpy as np
 import scanpy as sc
 import pandas as pd
 import seaborn as sns
-from .utils import pca
+from .preprocess import pca
 import matplotlib.pyplot as plt
 
 #os.environ['R_HOME'] = '/scbio4/tools/R/R-4.0.3_openblas/R-4.0.3'    
