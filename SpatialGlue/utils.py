@@ -63,7 +63,7 @@ def clustering(adata, n_clusters=7, key='emb', add_key='SpatialGlue', method='mc
     """
     
     if use_pca:
-       adata.obsm[key + '_pca'] = pca(adata, n_comps=n_comps)
+       adata.obsm[key + '_pca'] = pca(adata, use_reps=key, n_comps=n_comps)
     
     if method == 'mclust':
        if use_pca: 
