@@ -12,7 +12,7 @@ class SpatialGlue:
         random_seed = 2022,
         learning_rate=0.0001,
         weight_decay=0.00,
-        epochs=1500, 
+        epochs=600, 
         dim_input=3000,
         dim_output=64,
         weight_factors = [1, 5, 1, 1]
@@ -80,6 +80,22 @@ class SpatialGlue:
         self.dim_input2 = self.features_omics2.shape[1]
         self.dim_output1 = self.dim_output
         self.dim_output2 = self.dim_output
+        
+        if self.datatype == 'SPOTS':
+           self.epochs = 600 
+           self.weight_factors = [1,5,1,1]
+           
+        elif self.datatype == 'Stereo-CITE-seq':
+           self.epochs = 1500 
+           self.weight_factors = [1,10,1,10]
+           
+        elif self.datatype == '10x':
+           self.epochs = 200
+           self.weight_factors = [1,5,1,10]
+            
+        elif self.datatype == 'Spatial-epigenome-transcriptome': 
+           self.epochs = 1600
+           self.weight_factors = [1,5,1,1]
     
     def train(self):
         self.model = Encoder_overall(self.dim_input1, self.dim_output1, self.dim_input2, self.dim_output2).to(self.device)
@@ -97,18 +113,6 @@ class SpatialGlue:
             # correspondence loss
             self.loss_corr_omics1 = F.mse_loss(results['emb_latent_omics1'], results['emb_latent_omics1_across_recon'])
             self.loss_corr_omics2 = F.mse_loss(results['emb_latent_omics2'], results['emb_latent_omics2_across_recon'])
-            
-            if self.datatype == 'SPOTS':
-               self.weight_factors = [1,5,1,1]
-               
-            elif self.datatype == 'Stereo-CITE-seq':
-               self.weight_factors = [1,10,1,10]
-               
-            elif self.datatype == '10x':
-                self.weight_factors = [1,5,1,10]
-                
-            elif self.datatype == 'Spatial-epigenome-transcripome':    
-                self.weight_factors = [1,5,1,1]
                 
             loss = self.weight_factors[0]*self.loss_recon_omics1 + self.weight_factors[1]*self.loss_recon_omics2 + self.weight_factors[2]*self.loss_corr_omics1 + self.weight_factors[3]*self.loss_corr_omics2
             
