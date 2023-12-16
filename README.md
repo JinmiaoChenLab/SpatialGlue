@@ -27,5 +27,8 @@ You'll need to install the following packages in order to run the codes.
 For the step-by-step tutorial, please refer to:
 [https://spatialglue-tutorials.readthedocs.io/en/latest/](https://spatialglue-tutorials.readthedocs.io/en/latest/)
 
+## Data
+The SPOTS mouse spleen data was obtained from the GEO repository (accession no. GSE198353, [https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE198353]), the Stereo-CITE-seq mouse thymus data from BGI and the spatial-epigenome-transcriptome mouse brain data from AtlasXplore ([https://web.atlasxomics.com/visualization/Fan]). The details of all datasets used are available in the Methods section. The data used as input to the methods tested in this study, inclusive of the Stereo-CITE-seq and the in-house human lymph node data have been uploaded to Zenodo and is freely available at [https://zenodo.org/records/10362607].
+
 ## Citation
 Yahui Long, Kok Siong Ang, Sha Liao, Raman Sethi, Yang Heng, Chengwei Zhong, Hang Xu, Nazihah Husna, Min Jian, Lai Guan Ng, Ao Chen, Nicholas RJ Gascoigne, Xun Xu, Jinmiao Chen. Deciphering spatial domains from spatial multi-omics with SpatialGlue. bioRxiv. 2023.
