@@ -98,14 +98,17 @@ def preprocessing(adata_omics1, adata_omics2, datatype='SPOTS', n_neighbors=3):
 
     # construct spatial neighbor graphs
     ################# spatial graph #################
+    if datatype in ['Stereo-CITE-seq', 'Spatial-epigenome-transcriptome']:
+       n_neighbors=6 
+        
     # omics1
     cell_position_omics1 = adata_omics1.obsm['spatial']
-    adj_omics1 = build_network(cell_position_omics1, n_neighbors=3)
+    adj_omics1 = build_network(cell_position_omics1, n_neighbors=n_neighbors)
     adata_omics1.uns['adj_spatial'] = adj_omics1
     
     # omics2
     cell_position_omics2 = adata_omics2.obsm['spatial']
-    adj_omics2 = build_network(cell_position_omics2, n_neighbors=3)
+    adj_omics2 = build_network(cell_position_omics2, n_neighbors=n_neighbors)
     adata_omics2.uns['adj_spatial'] = adj_omics2
     
     ################# feature graph #################
