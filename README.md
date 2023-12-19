@@ -1,5 +1,5 @@
 # Deciphering spatial domains from spatial multi-omics with SpatialGlue 
-This repository contains SpatialGlue script and jupyter notebooks for reproducing the benchmarking results in the paper. We provide experimental data in each case and please refer to the notebook for details. All experiment data is reproducible with scripts (https://github.com/JinmiaoChenLab/SpatialGlue/tree/main/notebooks/baseline%20methods). Some notebooks will be uploaded shortly. 
+This repository contains SpatialGlue script and jupyter notebooks for reproducing the benchmarking results in the paper. We provide experimental data in each case and please refer to the notebook for details. All experiment data is reproducible with scripts of methods (https://github.com/JinmiaoChenLab/SpatialGlue/tree/main/notebooks/baseline%20methods). Some notebooks will be uploaded shortly. 
 
 [![DOI](https://zenodo.org/badge/631763850.svg)](https://zenodo.org/badge/latestdoi/631763850)
 
