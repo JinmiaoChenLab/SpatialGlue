@@ -20,6 +20,7 @@ You'll need to install the following packages in order to run the codes.
 * pandas==1.4.2
 * scipy==1.8.1
 * scikit-learn==1.1.1
+* scikit-misc==0.2.0
 * tqdm==4.64.0
 * matplotlib==3.4.2
 * R==4.0.3
