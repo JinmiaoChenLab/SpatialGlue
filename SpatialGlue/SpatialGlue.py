@@ -133,8 +133,8 @@ class SpatialGlue:
         output = {'emb_latent_omics1': emb_omics1.detach().cpu().numpy(),
                   'emb_latent_omics2': emb_omics2.detach().cpu().numpy(),
                   'SpatialGlue': emb_combined.detach().cpu().numpy(),
-                  'alpha_omics1': results['alpha'].detach().cpu().numpy(),
-                  'alpha_omics2': results['alpha'].detach().cpu().numpy(),
+                  'alpha_omics1': results['alpha_omics1'].detach().cpu().numpy(),
+                  'alpha_omics2': results['alpha_omics2'].detach().cpu().numpy(),
                   'alpha': results['alpha'].detach().cpu().numpy()}
         
         return output
