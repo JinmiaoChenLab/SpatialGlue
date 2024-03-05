@@ -5,11 +5,30 @@ from torch.nn.parameter import Parameter
 from torch.nn.modules.module import Module
     
 class Encoder_overall(Module):
-    
+      
+    """\
+    Overall encoder.
+
+    Parameters
+    ----------
+    dim_in_feat_omics1 : int
+        Dimension of input features for omics1.
+    dim_in_feat_omics2 : int
+        Dimension of input features for omics2. 
+    dim_out_feat_omics1 : int
+        Dimension of latent representation for omics1.
+    dim_out_feat_omics2 : int
+        Dimension of latent representation for omics2, which is the same as omics1.
+    dropout: int
+        Dropout probability of latent representations.
+    act: Activation function. By default, we use ReLU.    
+
+    Returns
+    -------
+    results: a dictionary including representations and modality weights.
+
     """
-    Overall encoder
-    """
-    
+     
     def __init__(self, dim_in_feat_omics1, dim_out_feat_omics1, dim_in_feat_omics2, dim_out_feat_omics2, dropout=0.0, act=F.relu):
         super(Encoder_overall, self).__init__()
         self.dim_in_feat_omics1 = dim_in_feat_omics1
@@ -28,7 +47,7 @@ class Encoder_overall(Module):
         self.atten_omics2 = AttentionLayer(self.dim_out_feat_omics2, self.dim_out_feat_omics2)
         self.atten_cross = AttentionLayer(self.dim_out_feat_omics1, self.dim_out_feat_omics2)
         
-    def forward(self, features_omics1, features_omics2, adj_spatial_omics1, adj_feature_omics1, adj_spatial_omics2, adj_feature_omics2): 
+    def forward(self, features_omics1, features_omics2, adj_spatial_omics1, adj_feature_omics1, adj_spatial_omics2, adj_feature_omics2):
         
         # graph1
         emb_latent_spatial_omics1 = self.encoder_omics1(features_omics1, adj_spatial_omics1)  
@@ -44,6 +63,7 @@ class Encoder_overall(Module):
         
         # between-modality attention aggregation layer
         emb_latent_combined, alpha_omics_1_2 = self.atten_cross(emb_latent_omics1, emb_latent_omics2)
+        #print('emb_latent_combined:', emb_latent_combined)
         
         # reverse the integrated representation back into the original expression space with modality-specific decoder
         emb_recon_omics1 = self.decoder_omics1(emb_latent_combined, adj_spatial_omics1)
@@ -69,8 +89,23 @@ class Encoder_overall(Module):
 
 class Encoder(Module): 
     
-    """
-    Modality-specific GNN encoder 
+    """\
+    Modality-specific GNN encoder.
+
+    Parameters
+    ----------
+    in_feat: int
+        Dimension of input features.
+    out_feat: int
+        Dimension of output features. 
+    dropout: int
+        Dropout probability of latent representations.
+    act: Activation function. By default, we use ReLU.    
+
+    Returns
+    -------
+    Latent representation.
+
     """
     
     def __init__(self, in_feat, out_feat, dropout=0.0, act=F.relu):
@@ -79,7 +114,7 @@ class Encoder(Module):
         self.out_feat = out_feat
         self.dropout = dropout
         self.act = act
-        
+
         self.weight = Parameter(torch.FloatTensor(self.in_feat, self.out_feat))
         
         self.reset_parameters()
@@ -95,8 +130,23 @@ class Encoder(Module):
     
 class Decoder(Module):
     
-    """
-    Modality-specific GNN decoder 
+    """\
+    Modality-specific GNN decoder.
+
+    Parameters
+    ----------
+    in_feat: int
+        Dimension of input features.
+    out_feat: int
+        Dimension of output features. 
+    dropout: int
+        Dropout probability of latent representations.
+    act: Activation function. By default, we use ReLU.    
+
+    Returns
+    -------
+    Reconstructed representation.
+
     """
     
     def __init__(self, in_feat, out_feat, dropout=0.0, act=F.relu):
@@ -121,8 +171,20 @@ class Decoder(Module):
 
 class AttentionLayer(Module):
     
-    """
-    Attention layer
+    """\
+    Attention layer.
+
+    Parameters
+    ----------
+    in_feat: int
+        Dimension of input features.
+    out_feat: int
+        Dimension of output features.     
+
+    Returns
+    -------
+    Aggregated representations and modality weights.
+
     """
     
     def __init__(self, in_feat, out_feat, dropout=0.0, act=F.relu):
@@ -152,11 +214,3 @@ class AttentionLayer(Module):
         emb_combined = torch.matmul(torch.transpose(self.emb,1,2), torch.unsqueeze(self.alpha, -1))
     
         return torch.squeeze(emb_combined), self.alpha      
-    
-  
-    
-
-        
-        
-           
-    
