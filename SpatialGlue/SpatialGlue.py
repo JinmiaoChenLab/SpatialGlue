@@ -4,7 +4,7 @@ import torch.nn.functional as F
 from .model import Encoder_overall
 from .preprocess import adjacent_matrix_preprocessing
 
-class SpatialGlue:
+class Train_SpatialGlue:
     def __init__(self, 
         data,
         datatype = 'SPOTS',
