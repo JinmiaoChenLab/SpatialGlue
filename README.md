@@ -37,4 +37,4 @@ In the paper, we compared SpatialGlue with 7 state-of-the-art single-cell multi-
 notebooks covering the benchmarking analysis in this paper are available at https://github.com/JinmiaoChenLab/SpatialGlue/tree/main/notebooks.
 
 ## Citation
-[Yahui Long](https://longyahui.github.io/Home//) et al. Deciphering spatial domains from spatial multi-omics with SpatialGlue. **Nature Methods** (accepted). 2024.
+[Yahui Long](https://longyahui.github.io/Home//) et al. Deciphering spatial domains from spatial multi-omics with SpatialGlue. **Nature Methods**. 2024.
